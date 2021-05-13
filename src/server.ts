@@ -1,13 +1,4 @@
-import express from 'express';
-// se faço assim ele importa por padrao o index
-import "./database";
+import { http} from '../src/http';
+import './websocket/client';
 
-import { routes } from "./routes";
-
-const app = express();
-
-app.use(express.json())
-
-app.use(routes)
-
-app.listen(3000, () => console.log("Server is running :D"))
+http.listen(3000, () => console.log("Server is running on port 3000 :D"))
