@@ -17,3 +17,16 @@ chat support to use on websites with communication between users and administrat
 
 - Relational database: SQLite
 - Type ORM
+
+## How to start
+- Install modules
+
+    ```bash
+    npm install
+    ```
+
+- Start the bot
+
+    ```bash
+    npm start / npm run dev
+    ```
