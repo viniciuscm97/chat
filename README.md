@@ -17,4 +17,3 @@ chat support to use on websites with communication between users and administrat
 
 - Relational database: SQLite
 - Type ORM
-
