@@ -8,6 +8,9 @@ document.querySelector("#start_chat").addEventListener("click", (event) => {
   const chat_help = document.getElementById("chat_help");
   chat_help.style.display = "none";
 
+  const button_support = document.getElementById("btn_support");
+  button_support.style.display = "none";
+
   const chat_in_support = document.getElementById("chat_in_support");
   chat_in_support.style.display = "block";
 
@@ -91,3 +94,8 @@ document
 
     text.value = ''; 
   });
+
+function closeChat(){
+  const chat_in_support = document.getElementById("chat_in_support");
+  chat_in_support.style.display = "none";
+}
