@@ -54,8 +54,10 @@ io.on('connection', (socket) => {
 
         socket.emit("client_list_all_messages", allMessages);
 
-        const allUsers = await connectionsService.findAllWithoutAdmin();
+        const usersWithoutAdmin = await connectionsService.findAllWithoutAdmin();
+        const allUsers = await connectionsService.findAll();
 
+        io.emit("admin_list_all_users_without_admin", usersWithoutAdmin);
         io.emit("admin_list_all_users", allUsers);
     })
 

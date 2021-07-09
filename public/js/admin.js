@@ -1,7 +1,8 @@
 const socket = io();
 let connectionsUser = [];
 
-socket.on("admin_list_all_users", connections => {
+socket.on("admin_list_all_users_without_admin", connections => {
+    
     connectionsUser = connections;
 
     document.getElementById("list_users").innerHTML = "";
@@ -18,11 +19,48 @@ socket.on("admin_list_all_users", connections => {
     });
 });
 
-function call(id){
-    const connection = connectionsUser.find(
-        connection => connection.socket_id == id
-    );
+socket.on("admin_list_all_users", connections => {
+    let divHistoric = document.getElementById("historic");
+    let usersInHistoric = document.querySelectorAll(".historics_messages")
+    
+    let userIds = [];
+    let usersToAdd = [];
+    
+    usersInHistoric.forEach(user => userIds.push(user.id));
 
+    connections.forEach(connection => {
+        if(userIds.length === 0){
+            usersToAdd.push(connection);
+        }else{
+            let connectionFoundInHistoric = userIds.find(id => id === connection.user_id);
+            if(!connectionFoundInHistoric) usersToAdd.push(connection)
+        }
+    });
+    // connectionsUser = connections;
+
+    usersToAdd.forEach(connection => {
+        if(connection.admin_id != null){
+            const createDiv = document.createElement("div");
+            createDiv.className = "historics_messages";
+            createDiv.id = connection.user_id;
+            createDiv.innerHTML = `<span class="email">${connection.user.email}</span>`
+            createDiv.innerHTML += `<button class="btn_atd" onclick="call('${connection.socket_id}')">Entrar</button>`
+            createDiv.innerHTML += `<span class="admin_date">${dayjs(
+                connection.created_at).format('DD/MM/YYYY HH:mm:ss')}</span>`;
+
+            divHistoric.appendChild(createDiv);
+        }
+    });
+    console.log(connectionsUser)
+
+
+});
+
+function call(id){
+    console.log(id)
+    console.log(connectionsUser)
+    let connection = connectionsUser.find( connection => connection.socket_id = id);
+    console.log(connection.user.email)
     const template = document.getElementById("admin_template").innerHTML;
 
     const rendered = Mustache.render(template,{

@@ -6,11 +6,16 @@ import { MessageService } from '../services/MesssageService';
 io.on("connect", async (socket) => {
     const connectionService = new ConnectionsService();
     const messageService = new MessageService();
-
+    
     const allConnectionWithoutAdmin = await connectionService.findAllWithoutAdmin();
 
-    io.emit("admin_list_all_users", allConnectionWithoutAdmin);
+    io.emit("admin_list_all_users_without_admin", allConnectionWithoutAdmin);
 
+    const allConnections = await connectionService.findAll();
+
+    io.emit("admin_list_all_users", allConnections);
+
+    
     socket.on("admin_list_messages_by_user", async (params,callback) => {
         const { user_id } = params;
 
@@ -42,6 +47,6 @@ io.on("connect", async (socket) => {
 
         const allConnectionWithoutAdmin = await connectionService.findAllWithoutAdmin();
 
-        io.emit("admin_list_all_users", allConnectionWithoutAdmin);
+        io.emit("admin_list_all_users_without_admin", allConnectionWithoutAdmin);
     })
 })

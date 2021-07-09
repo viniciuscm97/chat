@@ -46,10 +46,17 @@ class ConnectionsService {
         return connections;
     }
 
+    async findAll(){
+        const connections = await this.connectionRepository.find({
+            relations: ["user"]
+        })
+
+        return connections;
+    }
+
     async findBySocketID(socket_id: string){
         const connection = await this.connectionRepository.findOne({
-            socket_id,
-        })
+            socket_id});
 
         return connection;
     }

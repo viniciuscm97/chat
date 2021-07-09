@@ -14,7 +14,9 @@
   </head>
 
   <body>
-    <div id="list_users"></div>
+    <div id="list_users">
+      <h2>Em aberto</h2>
+    </div>
 
     <script id="template" type="x-tmpl-mustache">
       <div id="user{{id}}">
@@ -39,6 +41,10 @@
                  </div>
       </div>
     </script>
+
+    <div id="historic">
+      <h2>Histórico</h2>
+    </div>
   </body>
 
   <script src="/socket.io/socket.io.js"></script>
