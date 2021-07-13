@@ -35,6 +35,12 @@ class UsersService {
 
         return connection;
     }
+
+    async findByID(id: string){
+        const connection = await this.usersRepository.findOne({id})
+
+        return connection;
+    }
 }
 
 export { UsersService}

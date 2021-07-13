@@ -49,8 +49,8 @@ document.querySelector("#start_chat").addEventListener("click", (event) => {
       } else {
         const rendered = Mustache.render(template_admin, {
           message_admin: message.text,
-        });
-
+        }); 
+ 
         document.getElementById("messages").innerHTML += rendered;
       }
     });
@@ -77,7 +77,7 @@ document
 
     const params = {
       text: text.value,
-      socket_admin_id,
+      socket_admin_id: socket_admin_id ? socket_admin_id : socket.id
     };
 
     socket.emit("client_send_to_admin", params);

@@ -1,82 +1,63 @@
 const socket = io();
 let connectionsUser = [];
 
-socket.on("admin_list_all_users_without_admin", connections => {
-    
+socket.on("admin_list_all_users_without_admin", (data) => {
+
+    const connections = data.usersWithoutAdmin ? data.usersWithoutAdmin : data;
+    console.log(connections)
     connectionsUser = connections;
 
     document.getElementById("list_users").innerHTML = "";
-
+    
     let template = document.getElementById("template").innerHTML;
     
     connections.forEach(connection => {
-        const rendered = Mustache.render(template, {
-            email: connection.user.email,
-            id: connection.socket_id
-        });
+        let openChat = document.getElementById(`allMessages${connection.user.id}`);
 
-        document.getElementById("list_users").innerHTML += rendered;
-    });
-});
+        if(openChat){
 
-socket.on("admin_list_all_users", connections => {
-    let divHistoric = document.getElementById("historic");
-    let usersInHistoric = document.querySelectorAll(".historics_messages")
-    
-    let userIds = [];
-    let usersToAdd = [];
-    
-    usersInHistoric.forEach(user => userIds.push(user.id));
+            const lastMessages = data.allMessages[data.allMessages.length - 1];
 
-    connections.forEach(connection => {
-        if(userIds.length === 0){
-            usersToAdd.push(connection);
-        }else{
-            let connectionFoundInHistoric = userIds.find(id => id === connection.user_id);
-            if(!connectionFoundInHistoric) usersToAdd.push(connection)
-        }
-    });
-    // connectionsUser = connections;
-
-    usersToAdd.forEach(connection => {
-        if(connection.admin_id != null){
             const createDiv = document.createElement("div");
-            createDiv.className = "historics_messages";
-            createDiv.id = connection.user_id;
-            createDiv.innerHTML = `<span class="email">${connection.user.email}</span>`
-            createDiv.innerHTML += `<button class="btn_atd" onclick="call('${connection.socket_id}')">Entrar</button>`
+    
+            createDiv.className = "admin_message_client";
+            createDiv.innerHTML = `<span>${connection.user.email}</span>`
+            createDiv.innerHTML += `<span>${lastMessages.text}</span>`
             createDiv.innerHTML += `<span class="admin_date">${dayjs(
-                connection.created_at).format('DD/MM/YYYY HH:mm:ss')}</span>`;
+                lastMessages.created_at).format('DD/MM/YYYY HH:mm:ss')}</span>`;
 
-            divHistoric.appendChild(createDiv);
+            openChat.appendChild(createDiv);
+        }else{
+
+            const rendered = Mustache.render(template, {
+                email: connection.user.email,
+                id: connection.socket_id
+            });
+            
+            document.getElementById("list_users").innerHTML += rendered;
         }
     });
-    console.log(connectionsUser)
-
-
 });
 
-function call(id){
-    console.log(id)
-    console.log(connectionsUser)
-    let connection = connectionsUser.find( connection => connection.socket_id = id);
-    console.log(connection.user.email)
+function call(id) {
+    let connection = connectionsUser.find( connection => connection.socket_id === id);
+
     const template = document.getElementById("admin_template").innerHTML;
 
     const rendered = Mustache.render(template,{
         email: connection.user.email,
-        id: connection.user_id
+        id: connection.user_id,
     });
 
     document.getElementById("supports").innerHTML += rendered;
 
     const params = {
-        user_id: connection.user_id
+        user_id: connection.user_id,
     };
 
-    socket.emit("admin_user_in_support", params)
+    socket.emit("admin_user_in_support", params);
 
-    socket.emit("admin_list_messages_by_user", params, messages => {
+    socket.emit("admin_list_messages_by_user", params, (messages) => {
 
         const divMessages = document.getElementById(`allMessages${connection.user_id}`)
 
@@ -103,6 +84,7 @@ function call(id){
             divMessages.appendChild(createDiv);
         })
     })
+
 }
 
 function sendMessage(id) {
@@ -128,14 +110,13 @@ function sendMessage(id) {
     
 }
 
-socket.on("admin_receive_message", data => {
-    const connection = connectionsUser.find( connection => connection.socket_id = data.socket_id);
+socket.on("admin_receive_message", (data) => {
 
-    const divMessages = document.getElementById(`allMessages${connection.user_id}`)
+    const divMessages = document.getElementById(`allMessages${data.user.user_id}`)
     const createDiv = document.createElement("div");
     
     createDiv.className = "admin_message_client";
-    createDiv.innerHTML = `<span>${connection.user.email}</span>`
+    createDiv.innerHTML = `<span>${data.user.email}</span>`
     createDiv.innerHTML += `<span>${data.message.text}</span>`
     createDiv.innerHTML += `<span class="admin_date">${dayjs(
     data.message.created_at).format('DD/MM/YYYY HH:mm:ss')}</span>`;

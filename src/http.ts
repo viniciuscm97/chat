@@ -3,7 +3,6 @@ import { createServer } from 'http';
 import { Server,Socket } from 'socket.io';
 import path from 'path';
 
-// se faço assim ele importa por padrao o index
 import "./database";
 
 import { routes } from "./routes";
